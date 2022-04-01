@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package product;
+//生成的目标文件放在proto/product包中,如果没有此目录会重建
+//option go_package = "meshop-protos/product/pb";
+
+option go_package = "github.com/micrease/meshop-protos/product/pb";
+
+//导入公共proto
+//import "common.proto";
+import "meshop-protos/header/header.proto";
+
+//protoc -I ../../ -I ./ --proto_path=. --proto_path=${GOMODCACHE} --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  *.proto
+//protoc -I ../../ -I ./ --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  *.proto
+service ProductService {
+  rpc GetProductList (ProductRequest) returns (ProductListResponse);
+  rpc CreateProduct (Product) returns (ProductResponse);
+  rpc UpdateProduct (Product) returns (ProductResponse);
+  rpc DeleteProduct (Product) returns (ProductResponse);
+  rpc GetProductDetail (Product) returns (ProductResponse);
+}
+//请求
+message Product {
+  header.RequestHeader header = 1;
+  int32 prodId = 2;
+  string prodName = 3;
+}
+
+message ProductRequest {
+  header.RequestHeader header = 1;
+  int32 size = 2;
+}
+
+//响应
+message ProductListResponse {
+  //状态码
+  header.ResponseHeader header = 1;
+  //以下为返回结构
+  repeated Product data = 2;
+}
+
+message ProductResponse {
+  //状态码
+  header.ResponseHeader header = 1;
+  //商品信息
+  Product data = 2;
+}
+
