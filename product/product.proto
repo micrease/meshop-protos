@@ -1,48 +1,79 @@
 syntax = "proto3";
 
 package product;
-//生成的目标文件放在proto/product包中,如果没有此目录会重建
-//option go_package = "meshop-protos/product/pb";
 
+//命名规范:https://go-kratos.dev/docs/guide/api-protobuf
 option go_package = "github.com/micrease/meshop-protos/product/pb";
 
 //导入公共proto
-//import "common.proto";
-import "meshop-protos/header/header.proto";
+//import "meshop-protos/header/header.proto";
 
-//protoc -I ../../ -I ./ --proto_path=. --proto_path=${GOMODCACHE} --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  *.proto
 //protoc -I ../../ -I ./ --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  *.proto
 service ProductService {
-  rpc GetProductList (ProductRequest) returns (ProductListResponse);
-  rpc CreateProduct (Product) returns (ProductResponse);
-  rpc UpdateProduct (Product) returns (ProductResponse);
-  rpc DeleteProduct (Product) returns (ProductResponse);
-  rpc GetProductDetail (Product) returns (ProductResponse);
-}
-//请求
-message Product {
-  header.RequestHeader header = 1;
-  int32 prodId = 2;
-  string prodName = 3;
+  rpc Create (ProductInsertReq) returns (ProductResp);
+  rpc Delete (ProductDeleteReq) returns (ProductResp);
+  rpc Update (ProductUpdateReq) returns (ProductResp);
+  rpc Detail (ProductDetailReq) returns (ProductResp);
+  rpc PageList (ProductPageReq) returns (ProductPageResp);
 }
 
-message ProductRequest {
-  header.RequestHeader header = 1;
-  int32 size = 2;
+//定义一个通用的message
+message Product {
+  int32 id = 1;
+  string name = 2;
+  float price = 3;
+}
+
+//Insert
+message ProductInsertReq {
+  string name = 1;
+  float price = 2;
+}
+
+//Update
+message ProductUpdateReq {
+  int32 id = 1;
+  string name = 2;
+  float price = 3;
+}
+
+//Delete
+message ProductDeleteReq {
+  int32 id = 1;
+}
+
+//Select
+message ProductDetailReq {
+  int32 id = 1;
+}
+
+message PageResult{
+  int32 total_size = 1 [json_name = 'total_size'];
+  int32 total_sage = 2 [json_name = 'total_page'];
+  int32 page_no = 3 [json_name = 'page_no'];
+  int32 page_size = 4 [json_name = 'page_size'];
+  repeated Product list = 5;
+}
+
+message ProductResp {
+  //商品信息
+  Product data = 1;
+}
+
+
+message ProductPageReq {
+  int32 page_no = 1[json_name = 'page_no'];
+  int32 page_size = 2[json_name = 'page_size'];
+  int32 id = 3;
+  string name = 4;
+  float min_price = 5[json_name = 'min_price'];
+  float max_price = 6[json_name = 'max_price'];
 }
 
 //响应
-message ProductListResponse {
-  //状态码
-  header.ResponseHeader header = 1;
+message ProductPageResp {
   //以下为返回结构
-  repeated Product data = 2;
+  repeated Product data = 1;
 }
 
-message ProductResponse {
-  //状态码
-  header.ResponseHeader header = 1;
-  //商品信息
-  Product data = 2;
-}
 

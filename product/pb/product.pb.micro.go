@@ -6,7 +6,6 @@ package pb
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/micrease/meshop-protos/header/pb"
 	math "math"
 )
 
@@ -43,11 +42,11 @@ func NewProductServiceEndpoints() []*api.Endpoint {
 // Client API for ProductService service
 
 type ProductService interface {
-	GetProductList(ctx context.Context, in *ProductRequest, opts ...client.CallOption) (*ProductListResponse, error)
-	CreateProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error)
-	UpdateProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error)
-	DeleteProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error)
-	GetProductDetail(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error)
+	Create(ctx context.Context, in *ProductInsertReq, opts ...client.CallOption) (*ProductResp, error)
+	Delete(ctx context.Context, in *ProductDeleteReq, opts ...client.CallOption) (*ProductResp, error)
+	Update(ctx context.Context, in *ProductUpdateReq, opts ...client.CallOption) (*ProductResp, error)
+	Detail(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductResp, error)
+	PageList(ctx context.Context, in *ProductPageReq, opts ...client.CallOption) (*ProductPageResp, error)
 }
 
 type productService struct {
@@ -62,9 +61,9 @@ func NewProductService(name string, c client.Client) ProductService {
 	}
 }
 
-func (c *productService) GetProductList(ctx context.Context, in *ProductRequest, opts ...client.CallOption) (*ProductListResponse, error) {
-	req := c.c.NewRequest(c.name, "ProductService.GetProductList", in)
-	out := new(ProductListResponse)
+func (c *productService) Create(ctx context.Context, in *ProductInsertReq, opts ...client.CallOption) (*ProductResp, error) {
+	req := c.c.NewRequest(c.name, "ProductService.Create", in)
+	out := new(ProductResp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,9 +71,9 @@ func (c *productService) GetProductList(ctx context.Context, in *ProductRequest,
 	return out, nil
 }
 
-func (c *productService) CreateProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error) {
-	req := c.c.NewRequest(c.name, "ProductService.CreateProduct", in)
-	out := new(ProductResponse)
+func (c *productService) Delete(ctx context.Context, in *ProductDeleteReq, opts ...client.CallOption) (*ProductResp, error) {
+	req := c.c.NewRequest(c.name, "ProductService.Delete", in)
+	out := new(ProductResp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -82,9 +81,9 @@ func (c *productService) CreateProduct(ctx context.Context, in *Product, opts ..
 	return out, nil
 }
 
-func (c *productService) UpdateProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error) {
-	req := c.c.NewRequest(c.name, "ProductService.UpdateProduct", in)
-	out := new(ProductResponse)
+func (c *productService) Update(ctx context.Context, in *ProductUpdateReq, opts ...client.CallOption) (*ProductResp, error) {
+	req := c.c.NewRequest(c.name, "ProductService.Update", in)
+	out := new(ProductResp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -92,9 +91,9 @@ func (c *productService) UpdateProduct(ctx context.Context, in *Product, opts ..
 	return out, nil
 }
 
-func (c *productService) DeleteProduct(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error) {
-	req := c.c.NewRequest(c.name, "ProductService.DeleteProduct", in)
-	out := new(ProductResponse)
+func (c *productService) Detail(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductResp, error) {
+	req := c.c.NewRequest(c.name, "ProductService.Detail", in)
+	out := new(ProductResp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,9 +101,9 @@ func (c *productService) DeleteProduct(ctx context.Context, in *Product, opts ..
 	return out, nil
 }
 
-func (c *productService) GetProductDetail(ctx context.Context, in *Product, opts ...client.CallOption) (*ProductResponse, error) {
-	req := c.c.NewRequest(c.name, "ProductService.GetProductDetail", in)
-	out := new(ProductResponse)
+func (c *productService) PageList(ctx context.Context, in *ProductPageReq, opts ...client.CallOption) (*ProductPageResp, error) {
+	req := c.c.NewRequest(c.name, "ProductService.PageList", in)
+	out := new(ProductPageResp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -115,20 +114,20 @@ func (c *productService) GetProductDetail(ctx context.Context, in *Product, opts
 // Server API for ProductService service
 
 type ProductServiceHandler interface {
-	GetProductList(context.Context, *ProductRequest, *ProductListResponse) error
-	CreateProduct(context.Context, *Product, *ProductResponse) error
-	UpdateProduct(context.Context, *Product, *ProductResponse) error
-	DeleteProduct(context.Context, *Product, *ProductResponse) error
-	GetProductDetail(context.Context, *Product, *ProductResponse) error
+	Create(context.Context, *ProductInsertReq, *ProductResp) error
+	Delete(context.Context, *ProductDeleteReq, *ProductResp) error
+	Update(context.Context, *ProductUpdateReq, *ProductResp) error
+	Detail(context.Context, *ProductDetailReq, *ProductResp) error
+	PageList(context.Context, *ProductPageReq, *ProductPageResp) error
 }
 
 func RegisterProductServiceHandler(s server.Server, hdlr ProductServiceHandler, opts ...server.HandlerOption) error {
 	type productService interface {
-		GetProductList(ctx context.Context, in *ProductRequest, out *ProductListResponse) error
-		CreateProduct(ctx context.Context, in *Product, out *ProductResponse) error
-		UpdateProduct(ctx context.Context, in *Product, out *ProductResponse) error
-		DeleteProduct(ctx context.Context, in *Product, out *ProductResponse) error
-		GetProductDetail(ctx context.Context, in *Product, out *ProductResponse) error
+		Create(ctx context.Context, in *ProductInsertReq, out *ProductResp) error
+		Delete(ctx context.Context, in *ProductDeleteReq, out *ProductResp) error
+		Update(ctx context.Context, in *ProductUpdateReq, out *ProductResp) error
+		Detail(ctx context.Context, in *ProductDetailReq, out *ProductResp) error
+		PageList(ctx context.Context, in *ProductPageReq, out *ProductPageResp) error
 	}
 	type ProductService struct {
 		productService
@@ -141,22 +140,22 @@ type productServiceHandler struct {
 	ProductServiceHandler
 }
 
-func (h *productServiceHandler) GetProductList(ctx context.Context, in *ProductRequest, out *ProductListResponse) error {
-	return h.ProductServiceHandler.GetProductList(ctx, in, out)
+func (h *productServiceHandler) Create(ctx context.Context, in *ProductInsertReq, out *ProductResp) error {
+	return h.ProductServiceHandler.Create(ctx, in, out)
 }
 
-func (h *productServiceHandler) CreateProduct(ctx context.Context, in *Product, out *ProductResponse) error {
-	return h.ProductServiceHandler.CreateProduct(ctx, in, out)
+func (h *productServiceHandler) Delete(ctx context.Context, in *ProductDeleteReq, out *ProductResp) error {
+	return h.ProductServiceHandler.Delete(ctx, in, out)
 }
 
-func (h *productServiceHandler) UpdateProduct(ctx context.Context, in *Product, out *ProductResponse) error {
-	return h.ProductServiceHandler.UpdateProduct(ctx, in, out)
+func (h *productServiceHandler) Update(ctx context.Context, in *ProductUpdateReq, out *ProductResp) error {
+	return h.ProductServiceHandler.Update(ctx, in, out)
 }
 
-func (h *productServiceHandler) DeleteProduct(ctx context.Context, in *Product, out *ProductResponse) error {
-	return h.ProductServiceHandler.DeleteProduct(ctx, in, out)
+func (h *productServiceHandler) Detail(ctx context.Context, in *ProductDetailReq, out *ProductResp) error {
+	return h.ProductServiceHandler.Detail(ctx, in, out)
 }
 
-func (h *productServiceHandler) GetProductDetail(ctx context.Context, in *Product, out *ProductResponse) error {
-	return h.ProductServiceHandler.GetProductDetail(ctx, in, out)
+func (h *productServiceHandler) PageList(ctx context.Context, in *ProductPageReq, out *ProductPageResp) error {
+	return h.ProductServiceHandler.PageList(ctx, in, out)
 }
