@@ -6,14 +6,25 @@ package product;
 option go_package = "github.com/micrease/meshop-protos/product/pb";
 
 //导入公共proto
-//import "meshop-protos/header/header.proto";
+//import "header/header.proto";
+import "google/api/annotations.proto";
 
-//protoc -I ../../ -I ./ --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  *.proto
+//protoc -I ./  --go_out=paths=source_relative:pb/  --micro_out=plugins=micro,paths=source_relative:pb/  product/*.proto
 service ProductService {
-  rpc Create (ProductInsertReq) returns (ProductResp);
+  rpc Create (ProductInsertReq) returns (ProductResp){
+    option (google.api.http) = {
+      post: "/v1/product/add"
+      body:"*"
+    };
+  };
+  //{option (google.api.http) = {post: "/hello";body: "*";}
   rpc Delete (ProductDeleteReq) returns (ProductResp);
   rpc Update (ProductUpdateReq) returns (ProductResp);
-  rpc Detail (ProductDetailReq) returns (ProductResp);
+  rpc Detail (ProductDetailReq) returns (ProductResp){
+    option (google.api.http) = {
+      get: "/v1/product/detail/{id}"
+    };
+  };
   rpc PageList (ProductPageReq) returns (ProductPageResp);
 }
 
